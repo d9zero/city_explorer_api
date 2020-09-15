@@ -1,31 +1,25 @@
 'use strict';
 
 require('dotenv').config();
+
 const express = require('express');
-const cors = express();
-const geoData = require('./data/location.json');
-const restData = require('./data/weather.json');
+const cors = require('cors');
+const {res, raw} = require('express');
 
 const PORT = process.env.PORT;
 const app = express();
 app.use(cors());
 
+
 app.get('/', (req, res) => {
-  res.send('Home Page!');
+  res.send('The Home Page!');
 });
 
 app.get('/bad', (req, res) => {
   throw new Error('poo');
 });
 
-// The callback can be a separate function. Really makes things readable
-app.get('/about', aboutUsHandler);
 
-function aboutUsHandler(req, res) {
-  res.status(200).send('About Us Page');
-}
-
-// API Routes
 app.get('/location', handleLocation);
 app.get('/restaurants', handleRestaurants);
 
