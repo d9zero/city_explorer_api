@@ -10,19 +10,19 @@ const PORT = process.env.PORT;
 const app = express();
 app.use(cors());
 
-app.get('/', (request, response) => {
-  response.send('Home Page!');
+app.get('/', (req, res) => {
+  res.send('Home Page!');
 });
 
-app.get('/bad', (request, response) => {
+app.get('/bad', (req, res) => {
   throw new Error('poo');
 });
 
 // The callback can be a separate function. Really makes things readable
 app.get('/about', aboutUsHandler);
 
-function aboutUsHandler(request, response) {
-  response.status(200).send('About Us Page');
+function aboutUsHandler(req, res) {
+  res.status(200).send('About Us Page');
 }
 
 // API Routes
@@ -33,16 +33,16 @@ app.use('*', notFoundHandler);
 
 // HELPER FUNCTIONS
 
-function handleLocation(request, response) {
+function handleLocation(req, res) {
   try {
     const geoData = require('./data/location.json');
-    const city = request.query.city;
+    const city = req.query.city;
     const locationData = new Location(city, geoData);
-    response.send(locationData);
+    res.send(locationData);
   }
   catch (error) {
     console.log('ERROR', error);
-    response.status(500).send('So sorry, something went wrong.');
+    res.status(500).send('So sorry, something went wrong.');
   }
 }
 
@@ -53,18 +53,18 @@ function Location(city, geoData) {
   this.longitude = geoData[0].lon;
 }
 
-function handleRestaurants(request, response) {
+function handleRestaurants(req, res) {
   try {
     const data = require('./data/restaurants.json');
     const restaurantData = [];
     data.nearby_restaurants.forEach(entry => {
       restaurantData.push(new Restaurant(entry));
     });
-    response.send(restaurantData);
+    res.send(restaurantData);
   }
   catch (error) {
     console.log('ERROR', error);
-    response.status(500).send('So sorry, something went wrong.');
+    res.status(500).send('So sorry, something went wrong.');
   }
 }
 
@@ -74,8 +74,8 @@ function Restaurant(entry) {
   this.locality = entry.restaurant.location.locality;
 }
 
-function notFoundHandler(request, response) {
-  response.status(404).send('huh?');
+function notFoundHandler(req, res) {
+  res.status(404).send('huh?');
 }
 
 
