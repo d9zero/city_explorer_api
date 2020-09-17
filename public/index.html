@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>City Explorer</title>
+  <link rel="stylesheet" href="/css/style.css">
+
+  <!-- Template for summary -->
+  <script type="text/x-tmpl-mustache" id="title-template">
+    <span>All About {{formatted_query}}</span>
+  </script>
+
+  <!-- Template for restaurant data -->
+  <script type="text/x-tmpl-mustache" id="restaurant-results-template">
+    <li>
+      <div>{{search_query.search_query}}</div>
+      <div>{{formatted_query}}</div>
+      <div>latitude:{{latitude}}</div>
+      <div>longitude:{{longitude}}</div>
+    </li>
+  </script>
+  
+  <!-- Template for weather -->
+  <script type="text/x-tmpl-mustache" id="weather-template">
+    <li>
+      <div>date: {{time}}</div>
+      <div>forecast: {{forecast}}</div>
+    </li>
+  </script>
+</head>
+
+<body>
+
+  <header>
+    <h1>City Explorer</h1>
+    <p>Enter a location below to learn about the weather, restaurants, movies, and more!</p>
+  </header>
+
+  <main>
+
+    <form id="search-form">
+      <label for="search">Search for a location</label>
+      <input type="text" name="search" id="input-search" placeholder="Enter a location here">
+      <button type="submit">Explore!</button>
+    </form>
+
+    <section id="map"></section>
+
+    <h2 id="title"></h2>
+
+    <section class="columns">
+
+      <!-- Section for city data -->
+      <section id="restaurants" class="hide">
+        <h3>City</h3>
+        <ul id="restaurant-results"></ul>
+      </section>
+
+      <section id="weather" class="hide">
+        <h3>Weather</h3>
+        <ul id="weather-results"></ul>
+      </section>
+
+    </section>
+
+  </main>
+  <footer>
+  </footer>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/mustache@latest"></script>
+  <script src="./JS/app.js"></script>
+</body>
+
+</html>
