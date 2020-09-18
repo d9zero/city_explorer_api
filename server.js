@@ -6,6 +6,7 @@ const express = require('express');
 const cors = require('cors');
 const superagent = require('superagent');
 const app = express();
+const pg = require('pg');
 
 // application setup
 
@@ -15,17 +16,9 @@ app.use(cors());
 
 app.use(express.static('./public'));
 
-const dataBaseUrl = prorcess.env.DATABASE_URL;
-const client = new pg.Client(dataBaseUrl);
-client.on('error', (err) => {
-  console.error(err);
-});
-
-client.connect()
-  .then (() => {
-// serer listener
-  app.listen(PORT, () => console.log(`App is listening on ${PORT}`));
-  });
+// intialize client
+console.log(PORT, process.env.DATABASE_URL);
+const client = new pg.Client(process.env.DATABASE_URL);
 
 // api routes
 app.get('/location', handleLocation);
@@ -33,21 +26,14 @@ app.get('/restaurants', handleRestaurants);
 app.get('/trails', handleTrails);
 app.get ('/weather', handleWeather);
 
-const pg = require('pg');
-
 app.get('/', (req, res) => {
   res.send('The Home Page!');
 });
-
-app.use('*', errorHandler)
-
-// intialize client
-const client = new pg.Client(process.env.DATABASE_URL);
-client.on('error', err => console.error(err));
-
-
-
 app.use('*', notFoundHandler);
+
+// client.on('error', err => console.error(err));
+
+
 
 // HELPER FUNCTIONS
 
@@ -125,27 +111,32 @@ function handleRestaurants(req, res) {
 function handleWeather(request, response) {
   let key = process.env.WEATHER_API_KEY;
   let city = request.query.search_query;
-  const SQL = `SELECT * FROM weather WHERE search_query=$1;`;
+  const SQLDATE = `SELECT COUNT(1) FROM EVENTS WHERE TIME > NOW() - INTERVAL '1 day';`;
+  const SQLVAL = `SELECT * FROM weather WHERE search_query=$1;`;
   let safeValues = [city]
-  client.query(SQL, safeValues)
+  client.query(SQLVAL, safeValues)
     .then(result => {
       if (results.rows.length > 0) { 
         console.log('getting city from memory', results.query.city);
         res.status(200).json(result.rows[0]);
-      }
-    } else {
+    }
+     
+    else {
       let key = process.env.WEATHER_API_KEY;
       let url = `https://api.weatherbit.io/v2.0/forecast/daily?city=${city}&country=us&days=8&key=${key}`;
+    
 
 
-  superagent.get(url)
-    .then(data => {
-      console.log(data.body.data);
-      const weatherArr = data.body.data
-      const weatherConst = weatherArr.map(entry => new Weather(entry));
-      response.send(weatherConst);
-    })
-    .catch(() => response.status(500).send('So sorry, something went wrong.'));
+      superagent.get(url)
+        .then(data => {
+          console.log(data.body.data);
+          const weatherArr = data.body.data
+          const weatherConst = weatherArr.map(entry => new Weather(entry));
+          response.send(weatherConst);
+        })
+        .catch(() => response.status(500).send('So sorry, something went wrong.'));
+    }
+  })
 }
 
 
@@ -189,7 +180,9 @@ function Hiking(active) {
 // Make sure the server is listening for requests
 
  function startServer() {
-   app.listen(PORT, () => console.log(`App is listening on ${PORT}`));
+   app.listen(PORT, () => {
+     console.log(`App is listening on ${PORT}`)
+    });
  }
 
 client.connect()
