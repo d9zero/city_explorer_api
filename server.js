@@ -5,17 +5,27 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const superagent = require('superagent');
+const app = express();
 
 // application setup
 
 const PORT = process.env.PORT;
-const app = express();
+
 app.use(cors());
 
 app.use(express.static('./public'));
 
+const dataBaseUrl = prorcess.env.DATABASE_URL;
+const client = new pg.Client(dataBaseUrl);
+client.on('error', (err) => {
+  console.error(err);
+});
+
+client.connect()
+  .then (() => {
 // serer listener
-app.listen(PORT, () => console.log(`App is listening on ${PORT}`));
+  app.listen(PORT, () => console.log(`App is listening on ${PORT}`));
+  });
 
 // api routes
 app.get('/location', handleLocation);
@@ -45,8 +55,44 @@ function handleLocation(req, res) {
   try {
     let geoData = require('./data/location.json');
     const city = req.query.city;
-    const locationData = new Location(city, geoData);
-    res.send(locationData);
+    const sql = `SELECT * FROM location where search_query=$1;`;
+    const safeValues = [city];
+
+    client.query(sql, safeValues)
+      .then(resultsFromSql => {
+        if(resultsFromSql.rowCount){
+          const chosenCity = resultsFromSql.rows[0];
+          console.log('found the city in database');
+          res.status(200).send(chosenCity);
+        } else {
+
+        }
+      })
+
+    // const locationData = new Location(city, geoData);
+    // res.send(locationData);
+    const url = 'https://us1.locationiq.com/v1/search.php';
+    const queryObject = {
+      key: process.env.GEOCODE_API_KEY,
+      city,
+      formation: 'JSON',
+      limit: 1
+    }
+    superagent.get(url)
+      .query(queryObject)
+      .then(data => {
+        console.log(data.body[0]);
+        const place = new Location(city, data);
+        const sql = 'INSERT INTO locations (search_query, formatted_query, latitude, longitude) VALUES ($1, $2, $3, $4;';
+        const safeValues = [city, place.formatted_query, place.latitude, place.longitude];
+
+        client.query(sql, safeValues)
+          .then(resultsFromSql => {
+            const chosenCity = resultsFromSql.rows[0];
+          
+          })
+        res.status(200).send(place);
+      })
   }
   catch (error) {
     console.log('ERROR', error);
@@ -79,7 +125,17 @@ function handleRestaurants(req, res) {
 function handleWeather(request, response) {
   let key = process.env.WEATHER_API_KEY;
   let city = request.query.search_query;
-  let url = `https://api.weatherbit.io/v2.0/forecast/daily?city=${city}&country=us&days=8&key=${key}`;
+  const SQL = `SELECT * FROM weather WHERE search_query=$1;`;
+  let safeValues = [city]
+  client.query(SQL, safeValues)
+    .then(result => {
+      if (results.rows.length > 0) { 
+        console.log('getting city from memory', results.query.city);
+        res.status(200).json(result.rows[0]);
+      }
+    } else {
+      let key = process.env.WEATHER_API_KEY;
+      let url = `https://api.weatherbit.io/v2.0/forecast/daily?city=${city}&country=us&days=8&key=${key}`;
 
 
   superagent.get(url)
