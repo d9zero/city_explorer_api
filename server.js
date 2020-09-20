@@ -20,7 +20,7 @@ app.use(express.static('./public'));
 console.log(PORT, process.env.DATABASE_URL);
 const client = new pg.Client(process.env.DATABASE_URL);
 
-// api routes
+// callback function
 app.get('/location', handleLocation);
 app.get('/restaurants', handleRestaurants);
 app.get('/trails', handleTrails);
