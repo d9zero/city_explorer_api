@@ -6,4 +6,11 @@ CREATE TABLE location (
   formatted_query VARCHAR(255),
   latitude VARCHAR(255),
   longitude VARCHAR(255)
-)
+);
+
+DROP TABLE IF EXISTS weather;
+CREATE TABLE weather (
+  id SERIAL PRIMARY KEY,
+  time VARCHAR(30)
+  forecast VARCHAR(255)
+);
