@@ -40,20 +40,19 @@ app.use('*', notFoundHandler);
 function handleLocation(req, res) {
   try {
     let geoData = require('./data/location.json');
-    const city = req.query.city;
-    const sql = `SELECT * FROM location where search_query=$1;`;
+    const city = req.query.search;
+    console.log(city, '44');
+    const sql = `SELECT * FROM locations where search_query=$1;`;
     const safeValues = [city];
-
+    console.log("line 46");
     client.query(sql, safeValues)
       .then(resultsFromSql => {
         if(resultsFromSql.rowCount){
           const chosenCity = resultsFromSql.rows[0];
           console.log('found the city in database');
           res.status(200).send(chosenCity);
-        } else {
-
-        }
-      })
+        } 
+      }).catch(err => res.send(err));
 
     // const locationData = new Location(city, geoData);
     // res.send(locationData);
