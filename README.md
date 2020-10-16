@@ -24,3 +24,14 @@ To have this application run properly on their workstations, developers need to 
 ## Credits and Collaborations
 <!-- Give credit (and a link) to other people or resources that helped you build this application. -->
 -->
+
+10/15/20
+Number and name of feature: ________________________________
+
+Estimate of time needed to complete: _4hrs__
+
+Start time: _1:30pm__
+
+Finish time: _9:10pm__
+
+Actual time needed to complete: _3hrs__
