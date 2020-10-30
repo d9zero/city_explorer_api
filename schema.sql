@@ -14,3 +14,18 @@ CREATE TABLE weather (
   time VARCHAR(30),
   forecast VARCHAR(255)
 );
+
+DROP TABLE IF EXISTS trails;
+CREATE TABLE trails (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255),
+  location VARCHAR(255),
+  length FLOAT, 
+  stars FLOAT,
+  star_votes INT,
+  summary VARCHAR(255),
+  trail_url VARCHAR(255),
+  conditions VARCHAR(255),
+  condition_date DATE,
+  condition_time TIME
+);
