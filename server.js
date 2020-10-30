@@ -2,6 +2,8 @@
 
 require('dotenv').config();
 
+// Application Dependencies
+
 const express = require('express');
 const cors = require('cors');
 const superagent = require('superagent');
@@ -20,11 +22,14 @@ app.use(express.static('./public'));
 console.log(PORT, process.env.DATABASE_URL);
 const client = new pg.Client(process.env.DATABASE_URL);
 
-// callback function
-app.get('/location', handleLocation);
+// API Route Definitions
+
 app.get('/restaurants', handleRestaurants);
 app.get('/trails', handleTrails);
 app.get ('/weather', handleWeather);
+app.get('/yelp', yelpHandler);
+app.get('/movies', movieHandler);
+app.get('/location', handleLocation);
 
 app.get('/', (req, res) => {
   res.send('The Home Page!');
@@ -40,11 +45,11 @@ app.use('*', notFoundHandler);
 function handleLocation(req, res) {
   try {
     let geoData = require('./data/location.json');
-    const city = req.query.search;
-    console.log(city, '44');
+    let city = req.query.city;
+   
     const sql = `SELECT * FROM locations where search_query=$1;`;
     const safeValues = [city];
-    console.log("line 46");
+    const url = 'https://us1.locationiq.com/v1/search.php';
     client.query(sql, safeValues)
       .then(resultsFromSql => {
         if(resultsFromSql.rowCount){
@@ -56,7 +61,7 @@ function handleLocation(req, res) {
 
     // const locationData = new Location(city, geoData);
     // res.send(locationData);
-    const url = 'https://us1.locationiq.com/v1/search.php';
+   
     const queryObject = {
       key: process.env.GEOCODE_API_KEY,
       city,
@@ -138,6 +143,7 @@ function handleWeather(request, response) {
   })
 }
 
+// Trail Function
 
 function handleTrails(request, response){
   let lat = request.query.latitude;
@@ -156,6 +162,34 @@ function handleTrails(request, response){
 
 function notFoundHandler(req, res) {
   res.status(404).send('huh?');
+}
+
+//  Constructors
+
+
+function Location(city, locationData) {
+  this.search_query = city;
+  this.latitude = locationData.lat;
+  this.longitude = locationData.lon;
+  this.formatted_query = locationData.display_name;
+}
+
+function Restaurant(obj) {
+  this.name = obj.name;
+  this.image_url = obj.image_url;
+  this.price = obj.price;
+  this.rating = obj.rating;
+  this.url = obj.url;
+}
+
+function Place(obj) {
+  this.title = obj.title;
+  this.overview = obj.overview;
+  this.average_votes = obj.vote_average;
+  this.total_votes = obj.vote_count;
+  this.image_url = `https://image.tmdb.org/t/p/w500${obj.poster_path}`;
+  this.popularity = obj.popluarity;
+  this.released_on = obj.release_date;
 }
 
 function Weather(entry) {
