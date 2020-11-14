@@ -58,3 +58,15 @@ Start time: __8:34am___
 Finish time: __9:52pm___
 
 Actual time needed to complete: __1hr18min___
+
+## 11/10/20
+
+Number and name of feature: ____________Lab:09____________________
+
+Estimate of time needed to complete: __1hr___
+
+Start time: __4pm___
+
+Finish time: __4:45pm___
+
+Actual time needed to complete: __45min___
