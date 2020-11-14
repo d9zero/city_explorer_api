@@ -66,7 +66,7 @@ function handleLocation(req, res) {
       key: process.env.GEOCODE_API_KEY,
       city,
       formation: 'JSON',
-      limit: 1
+      limit: 2
     }
     superagent.get(url)
       .query(queryObject)
@@ -117,6 +117,9 @@ function handleWeather(request, response) {
   let city = request.query.search_query;
   const SQLDATE = `SELECT COUNT(1) FROM EVENTS WHERE TIME > NOW() - INTERVAL '1 day';`;
   const SQLVAL = `SELECT * FROM weather WHERE search_query=$1;`;
+
+  let url = `https://api.weatherbit.io/v2.0/forecast/daily?city=${city}&country=us&days=8&key=${key}`;
+
   let safeValues = [city]
   client.query(SQLVAL, safeValues)
     .then(result => {
@@ -126,8 +129,7 @@ function handleWeather(request, response) {
     }
      
     else {
-      let key = process.env.WEATHER_API_KEY;
-      let url = `https://api.weatherbit.io/v2.0/forecast/daily?city=${city}&country=us&days=8&key=${key}`;
+      
     
 
 
@@ -163,6 +165,57 @@ function handleTrails(request, response){
 function notFoundHandler(req, res) {
   res.status(404).send('huh?');
 }
+
+// Yelp function
+
+function yelpHandler(request, response){
+  let city = request.query.search_query;
+  let url = 'https://api.yelp.com/v3/businesses/search';
+  const queryParams = {
+  location: city,
+  term: 'food',
+  limit: 5
+  }
+    superagent.get(url)
+  .set('Authorization', `Bearer ${process.env.YELP_API_KEY}`)
+  .query(queryParams)
+  .then(data => {
+    let foodData = data.body.businesses;
+    let allRestuarants = foodData.map(food => new Restaurant(food));
+    response.status(200).send(allRestuarants);
+  }).catch(error => errorAlert(error, response));
+}
+
+// Movie Function
+
+function movieHandler(req, res) {
+
+  let city = req.query.search_query;
+  let tok4 = process.env.MOVIE_API_KEY;
+  const url = `https://api.themoviedb.org/3/search/movie/?api_key=${tok4}&query=${city}`;
+
+  const queryParams = {
+    access_token: process.env.MOVIE_API_KEY,
+    types: 'poi',
+    limit: 10,
+  };
+
+  superagent.get(url)
+    .query(queryParams)
+    .then((results) => {
+      let searchMovie = results.body.results.map(movies => {
+        let newerMovies = new Place(movies)
+        return newerMovies;
+      })
+      res.status(200).send(searchMovie);
+    })
+    .catch((error) => {
+      console.log('ERROR', error);
+      res.status(500).send('So sorry, something went wrong.');
+    });
+
+}
+
 
 //  Constructors
 

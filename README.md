@@ -26,7 +26,7 @@ To have this application run properly on their workstations, developers need to 
 -->
 
 10/15/20
-Number and name of feature: ________________________________
+Number and name of feature: ________Lab: 06 - APIs____________
 
 Estimate of time needed to complete: _4hrs__
 
@@ -35,3 +35,14 @@ Start time: _1:30pm__
 Finish time: _9:10pm__
 
 Actual time needed to complete: _3hrs__
+
+11/7/20
+Number and name of feature: _____Lab: 07 - APIs_____________
+
+Estimate of time needed to complete: _____
+
+Start time: _5:31pm__
+
+Finish time: _____
+
+Actual time needed to complete: _____
