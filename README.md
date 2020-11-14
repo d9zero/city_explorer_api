@@ -25,7 +25,7 @@ To have this application run properly on their workstations, developers need to 
 <!-- Give credit (and a link) to other people or resources that helped you build this application. -->
 -->
 
-10/15/20
+## 10/15/20
 Number and name of feature: ________Lab: 06 - APIs____________
 
 Estimate of time needed to complete: _4hrs__
@@ -36,13 +36,25 @@ Finish time: _9:10pm__
 
 Actual time needed to complete: _3hrs__
 
-11/7/20
+## 11/7/20
 Number and name of feature: _____Lab: 07 - APIs_____________
 
 Estimate of time needed to complete: _____
 
 Start time: _5:31pm__
 
-Finish time: _____
+Finish time: _7:25pm__
 
-Actual time needed to complete: _____
+Actual time needed to complete: __1hr54mins___
+
+## 11/10/20
+
+Number and name of feature: ____________Lab:08____________________
+
+Estimate of time needed to complete: __1hr___
+
+Start time: __8:34am___
+
+Finish time: __9:52pm___
+
+Actual time needed to complete: __1hr18min___
